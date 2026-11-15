@@ -1,0 +1,50 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    configure)
+        # Create 'acme' system group if it doesn't exist
+        if ! getent group acme >/dev/null; then
+            addgroup --system acme
+        fi
+
+        # Create 'acme' system user if it doesn't exist
+        if ! getent passwd acme >/dev/null; then
+            adduser --system \
+                    --ingroup acme \
+                    --home /var/lib/acme \
+                    --no-create-home \
+                    --disabled-login \
+                    --gecos "ACME Protocol Daemon" \
+                    acme
+        fi
+
+        # Set secure permissions on state/keys directory
+        chown -R acme:acme /var/lib/acme
+        chmod 0700 /var/lib/acme
+
+        # Ensure acme user can write to challenge path, but keep root/apache ownership where appropriate
+        chown -R acme:www-data /var/www/challenges
+        chmod 0755 /var/www/challenges
+
+        # Enable Apache configuration drop-in if a2enconf is available
+        if [ -x "$(command -v a2enconf)" ]; then
+            a2enconf acme-tiny || true
+            if [ -x "$(command -v systemctl)" ] && systemctl is-active --quiet apache2; then
+                systemctl reload apache2 || true
+            fi
+        fi
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

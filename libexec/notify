@@ -24,6 +24,7 @@ for cert in "$@"; do
   name="${cert##*/}"
   script="/etc/acme-tiny/notify.d/${name%.crt}.sh"
 
+  if false; then # FIXME port to Debian
   # kick apache if cert is mentioned
   if test "$cert" -nt "${notify}/httpd"; then
     if grep "$cert" /etc/httpd/conf.d/*.conf >/dev/null 2>&1; then
@@ -48,6 +49,7 @@ for cert in "$@"; do
 	&& touch "${notify}/dovecot" && \
         [ "$verbose" = "y" ] && echo "Dovecot reloaded"
     fi
+  fi
   fi
 
   # run any dropin extension

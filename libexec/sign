@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 if test "$(id -u)" -eq 0; then
   echo "Do not run as root!"
   exit 2
 fi
 
-. /etc/sysconfig/acme-tiny
+. /etc/default/acme-tiny
 DAYS="${1:-$DAYS}"
 test -n "$DAYS" || DAYS="7"
 if [[ "$DAYS" =~ ^[0-9]+$ ]]; then
@@ -35,7 +35,7 @@ for csr in csr/*.csr; do
     continue
   fi
   if test -w "$crt" || test ! -e "$crt"; then
-    echo acme_tiny --account-key private/account.key --csr "$csr" \
+    echo acme-tiny --account-key private/account.key --csr "$csr" \
 	--acme-dir /var/www/challenges/ --out "$crt"
   else
     echo "Can't write to $crt" 
@@ -43,7 +43,7 @@ for csr in csr/*.csr; do
     continue
   fi
 
-  if /usr/sbin/acme_tiny --account-key private/account.key --csr "$csr" \
+  if /usr/bin/acme-tiny --account-key private/account.key --csr "$csr" \
 	--acme-dir /var/www/challenges/ > "$tmp"; then
 	mv "$tmp" "$crt" || exit 1
   else

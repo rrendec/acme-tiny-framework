@@ -1,0 +1,5 @@
+etc/acme-tiny/notify.d
+var/lib/acme/certs
+var/lib/acme/csr
+var/lib/acme/private
+var/www/challenges

@@ -1,0 +1,47 @@
+#!/bin/sh
+set -e
+
+disable_apache2_conf() {
+    if [ -x "$(command -v a2disconf)" ]; then
+        a2disconf acme-tiny || true
+        if [ -x "$(command -v systemctl)" ] && systemctl is-active --quiet apache2; then
+            systemctl reload apache2 || true
+        fi
+    fi
+}
+
+case "$1" in
+    remove)
+        # Disable Apache configuration on removal
+        disable_apache2_conf
+    ;;
+
+    purge)
+        # Disable Apache configuration if not already done
+        disable_apache2_conf
+
+        # Remove the system user and group on package purge
+        if [ -x "$(command -v deluser)" ]; then
+            deluser --system acme || true
+        fi
+        if [ -x "$(command -v delgroup)" ]; then
+            delgroup --system --only-if-empty acme || true
+        fi
+
+        # Remove state data and empty challenge directory created for acme
+        rm -rf /var/lib/acme
+        rm -rf /var/www/challenges
+    ;;
+
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    ;;
+
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

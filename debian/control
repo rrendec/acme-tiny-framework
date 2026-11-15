@@ -1,0 +1,14 @@
+Source: acme-tiny-framework
+Section: utils
+Priority: optional
+Maintainer: Radu Rendec <radu@rendec.net>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+
+Package: acme-tiny-framework
+Architecture: all
+Depends: ${misc:Depends}, python3, openssl, apache2, adduser, acme-tiny
+Description: Tiny auditable script to issue and renew Let's Encrypt certificates
+ Debian package that adds a tiny framework to make issuing and
+ renewing [Let's Encrypt](https://letsencrypt.org/) certificates
+ convenient.

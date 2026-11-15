@@ -1,3 +1,9 @@
+acme-tiny-framework (0.2-1) unstable; urgency=medium
+
+  * Port apache2 notification to Debian
+
+ -- Radu Rendec <radu@rendec.net>  Sun, 15 Nov 2026 15:00:00 +0000
+
 acme-tiny-framework (0.1-1) unstable; urgency=medium
 
   * Initial Debian package build converted from EPEL acme-tiny-5.0.1-1.el9.noarch.rpm

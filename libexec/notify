@@ -24,15 +24,15 @@ for cert in "$@"; do
   name="${cert##*/}"
   script="/etc/acme-tiny/notify.d/${name%.crt}.sh"
 
-  if false; then # FIXME port to Debian
   # kick apache if cert is mentioned
-  if test "$cert" -nt "${notify}/httpd"; then
-    if grep "$cert" /etc/httpd/conf.d/*.conf >/dev/null 2>&1; then
-      apachectl graceful && touch "${notify}/httpd" && \
-        [ "$verbose" = "y" ] && echo "Httpd reloaded"
+  if test "$cert" -nt "${notify}/apache2"; then
+    if grep "$cert" /etc/apache2/sites-enabled/*.conf >/dev/null 2>&1; then
+      apachectl graceful && touch "${notify}/apache2" && \
+        [ "$verbose" = "y" ] && echo "apache2 reloaded"
     fi
   fi
 
+  if false; then # FIXME port to Debian
   # kick sendmail if cert is mentioned
   if test "$cert" -nt "${notify}/sendmail"; then
     if grep "/etc/pki/tls/certs/$name" /etc/mail/*.cf >/dev/null 2>&1; then
